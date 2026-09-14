@@ -169,25 +169,13 @@
         .fab-wa:hover{transform:scale(1.1)}
         .fab-wa svg{width:32px;height:32px;fill:#fff}
         @keyframes fab-pulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,.5)}70%{box-shadow:0 0 0 20px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
-
-        /* Mobile performance optimization */
-        @media(max-width:767px){
-            .card{will-change:auto}
-            .card:hover .ci{transform:none}
-            .bg-grain{opacity:.18}
-            .fbar,.cbox{backdrop-filter:none;-webkit-backdrop-filter:none}
-            body.modal-active .hero,
-            body.modal-active .fbar,
-            body.modal-active .grd,
-            body.modal-active .mft{filter:none}
-        }
     </style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas><div class="bg-t"></div><div class="bg-g"></div><div class="bg-grain"></div>
 
 <header class="hero">
-    <img src="backg.jpeg" alt="KH Il Vostro Caffe Facade" class="hero-i" fetchpriority="high" decoding="async">
+    <img src="backg.jpeg" alt="KH Il Vostro Caffe Facade" class="hero-i">
     <div class="hero-g"></div>
     <div class="cbox">
         <div class="mg">KH</div>
@@ -286,20 +274,7 @@ document.addEventListener('touchmove',e=>{if(e.touches[0]){mx=e.touches[0].clien
 class P{constructor(){this.rs(true)}rs(i){this.x=Math.random()*cv.width;this.y=i?Math.random()*cv.height:cv.height+Math.random()*60;this.rd=Math.random()*40+12;this.bsy=Math.random()*.3+.12;this.sy=this.bsy;this.sx=(Math.random()-.5)*.15;this.o=Math.random()*.04+.01;this.bo=this.o;const c=['160,120,69','200,180,160','198,156,109'];this.c=c[Math.floor(Math.random()*c.length)];this.ps=Math.random()*.015+.004;this.po=Math.random()*Math.PI*2;this.t=0}u(){this.t+=this.ps;const dx=mx-this.x,dy=my-this.y,d=Math.sqrt(dx*dx+dy*dy);if(d<180){const f=(180-d)/180*.12;this.x-=dx*f*.008;this.y-=dy*f*.008}this.y-=this.sy;this.x+=this.sx+Math.sin(this.t+this.po)*.1;this.o=this.bo+Math.sin(this.t*2+this.po)*.01;if(this.y<-this.rd*2)this.rs(false)}d(){const r=Math.max(.1,this.rd);cx.beginPath();cx.arc(this.x,this.y,r,0,Math.PI*2);cx.fillStyle=`rgba(${this.c},${Math.max(0,this.o)})`;cx.fill()}}
 function iP(){pts=[];const n=Math.min(Math.floor(cv.width/30),40);for(let i=0;i<n;i++)pts.push(new P())}
 function aB(){cx.clearRect(0,0,cv.width,cv.height);pts.forEach(p=>{p.u();p.d()});requestAnimationFrame(aB)}
-addEventListener('resize',()=>{rsC();iP()});
-rsC();iP();
-let animRunning=true;
-function aB(){
-    if(!animRunning) return;
-    cx.clearRect(0,0,cv.width,cv.height);
-    pts.forEach(p=>{p.u();p.d()});
-    requestAnimationFrame(aB);
-}
-document.addEventListener('visibilitychange',()=>{
-    animRunning=document.visibilityState==='visible';
-    if(animRunning) aB();
-});
-aB();
+addEventListener('resize',()=>{rsC();iP()});rsC();iP();aB();
 
 const SC={hotcoffee:{it:'Caffè e Tè Caldo',ar:'قهوة وشاي ساخن'},coldcoffee:{it:'Caffè e Tè Freddo',ar:'قهوة وشاي بارد'},juices:{it:'Succi',ar:'العصائر'},tropical:{it:'Tropical',ar:'تروبيكال',desc:'اختر مشروبك، وفوقه فواكه طازجة أو بانكيك.'},smoothieshake:{it:'Frullati e Milkshake',ar:'سموثي وميلك شيك'},mojito:{it:'Mojito',ar:'الموخيتو'},frappe:{it:'Frappé',ar:'الفربي'},slush:{it:'Slush',ar:'السلاش'},breakfast:{it:'Colazione',ar:'إفطار صباحي'},eveningbox:{it:'Box Serale',ar:'بوكس مسائي'},dolci:{it:'Dolci',ar:'الحلويات'}};
 const SUB={hot_coffee:{ar:'القهوة الساخنة',it:'Caffè Caldo'},hot_tea:{ar:'الشاي الساخن',it:'Tè Caldo'},hot_other:{ar:'مشروبات ساخنة أخرى',it:'Altre Bevande Calde'},matcha:{ar:'شاي الماتشا الياباني',it:'Tè Matcha Giapponese'},iced_tea:{ar:'الآيس تي',it:'Iced Tea'},iced_coffee:{ar:'القهوة الباردة',it:'Caffè Freddo'},tiramisu_cakes:{ar:'تيراميسو وكيك',it:'Tiramisù e Torte'},croissant_briosh:{ar:'بريوش',it:'Briosh'},pancake:{ar:'بانكيك',it:'Pancake'},crepe:{ar:'كريب',it:'Crepes'},other_sweets:{ar:'حلويات أخرى',it:'Altri Dolci'}};
@@ -346,16 +321,16 @@ const JU=[
 {id:73,ar:"عصير مانجو وفراولة",it:"Succo di Mango e Fragola",cat:"juices",img:"mangos.png",variants:[{name:"كوب",price:"8 د.ل"}]},
 {id:32,ar:"عصير فراولة",it:"Succo di Fragola",cat:"juices",img:"strw.png",variants:[{name:"كوب",price:"7 د.ل"},{name:"لتر",price:"17 د.ل"}]},
 {id:29,ar:"عصير كوكتيل",it:"Succo di Cocktail",cat:"juices",img:"koktail.png",variants:[{name:"كوب صغير",price:"10 د.ل"},{name:"لتر",price:"22 د.ل"}]},
-{id:74,ar:"عصير اناناس",it:"Succo di Ananas",cat:"juices",img:"an.jpeg",variants:[{name:"كوب",price:"12 د.ل"},{name:"لتر",price:"30 د.ل"}]},
-{id:104,ar:"عصير أناناس وجوز الهند",it:"Succo di ananas e cocco",cat:"juices",img:"an.jpeg",variants:[{name:"كوب",price:"14 د.ل"}]},
 {id:72,ar:"عصير عنب",it:"Succo di Uva",cat:"juices",img:"grape.jpeg",variants:[{name:"كوب",price:"10 د.ل"},{name:"لتر",price:"28 د.ل"}]},
 {id:35,ar:"عصير برتقال",it:"Succo di Arancia",cat:"juices",img:"orange.jpeg",variants:[{name:"كوب",price:"8 د.ل"},{name:"لتر",price:"18 د.ل"}]},
 {id:2,ar:"ليمون بالنعناع",it:"Limone e Menta",cat:"juices",img:"lemon2.jpeg",variants:[{name:"كوب",price:"8 د.ل"},{name:"لتر",price:"16 د.ل"}]},
 {id:30,ar:"فروتا",it:"Fruita",cat:"juices",img:"fruita.png",variants:[{name:"كوب",price:"12 د.ل"}]},
 {id:37,ar:"جوافة وبنجر",it:"Guava e Barbabietola",cat:"juices",img:"gwafab.png",variants:[{name:"كوب",price:"8 د.ل"},{name:"لتر",price:"20 د.ل"}]},
 {id:75,ar:"عصير جوافة",it:"Succo di Guava",cat:"juices",img:"gwafa.png",variants:[{name:"كوب",price:"8 د.ل"},{name:"لتر",price:"18 د.ل"}]},
-{id:602,ar:"افوكادو",it:"Avocado",price:"28 د.ل",cat:"juices",img:"avocado.png"},
+{id:104,ar:"عصير أناناس وجوز الهند",it:"Succo di ananas e cocco",cat:"juices",img:"ana.jpeg",variants:[{name:"كوب",price:"14 د.ل"}]},
+{id:74,ar:"عصير اناناس",it:"Succo di Ananas",cat:"juices",img:"ana.jpeg",variants:[{name:"كوب",price:"12 د.ل"},{name:"لتر",price:"30 د.ل"}]},
 
+{id:602,ar:"افوكادو",it:"Avocado",price:"28 د.ل",cat:"juices",img:"avocado.png"},
 {id:108,ar:"افوكادو دبل",it:"Avocado Doppio",price:"23 د.ل",desc:"يحتوي على طبقتين من اللوز والعسل",cat:"juices",img:"avocadot.png"},
 {id:109,ar:"افوكادو تربل",it:"Avocado Triplo",price:"32 د.ل",desc:"كوب نصف لتر",cat:"juices",img:"avocadod.png"}
 ];
@@ -533,7 +508,7 @@ function createCard(item) {
     return `
         <div class="card ${boxClass}" data-id="${item.id}" data-name="${item.ar}">
             <div class="ib">
-                <img src="${imgSrc}" alt="${item.ar}" class="ci" loading="lazy" decoding="async">
+                <img src="${imgSrc}" alt="${item.ar}" class="ci">
             </div>
             <div class="bdy">
                 <div class="nar">${item.ar}</div>
@@ -637,10 +612,7 @@ function openModal(item) {
     dP.classList.remove('cl');
     dP.classList.add('on');
     
-    const modalImg = document.getElementById('pI');
-    modalImg.src = item.img || phS;
-    modalImg.loading = "eager";
-    modalImg.decoding = "async";
+    document.getElementById('pI').src = item.img || phS;
     document.getElementById('pAr').innerText = item.ar;
     document.getElementById('pIt').innerText = item.it;
     
