@@ -187,7 +187,22 @@
             body.is-scrolling .hero-scroll{animation:none!important}
             body.is-scrolling .card:hover .ci{transform:none!important}
         }
-    </style>
+    
+
+        /* Mobile performance safeguards — visual design remains unchanged */
+        @media(max-width:767px){
+            .ci{transition:none;will-change:auto}
+            .card{will-change:auto}
+            .bg-grain{opacity:.18}
+            .hero-scroll{animation:none}
+        }
+
+
+        @media(max-width:767px){
+            .card{animation:none;opacity:1;transform:none}
+            .shd,.sec-desc,.sub-hdr{animation:none;opacity:1;transform:none}
+        }
+</style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas><div class="bg-t"></div><div class="bg-g"></div><div class="bg-grain"></div>
@@ -539,7 +554,7 @@ function createCard(item) {
     return `
         <div class="card ${boxClass}" data-id="${item.id}" data-name="${item.ar}">
             <div class="ib">
-                <img src="${imgSrc}" alt="${item.ar}" class="ci" loading="lazy" decoding="async" fetchpriority="low">
+                <img src="${phS}" data-src="${imgSrc}" alt="${item.ar}" class="ci" loading="eager" decoding="async" fetchpriority="low">
             </div>
             <div class="bdy">
                 <div class="nar">${item.ar}</div>
@@ -623,21 +638,49 @@ function renderGrid(cat) {
     }
 
     grid.innerHTML = html;
-    // Performance: let the browser prioritize only images near the viewport.
-    // Images remain the exact same files and visual dimensions.
+    // Fast, reliable image loader: real image URLs are requested only when cards are near the screen.
+    // The placeholder remains visible until the real image has loaded, so images never disappear.
+    const imgs = grid.querySelectorAll('img.ci[data-src]');
+    const loadImage = (img) => {
+        if (!img || img.dataset.loading === '1' || img.dataset.loaded === '1') return;
+        const src = img.dataset.src;
+        if (!src) return;
+        img.dataset.loading = '1';
+        const probe = new Image();
+        probe.decoding = 'async';
+        probe.onload = () => {
+            img.src = src;
+            img.dataset.loaded = '1';
+            img.dataset.loading = '0';
+        };
+        probe.onerror = () => {
+            img.dataset.loading = '0';
+            // Keep the KH placeholder instead of leaving a broken/blank image.
+        };
+        probe.src = src;
+    };
+
     if ('IntersectionObserver' in window) {
-        const imgs = grid.querySelectorAll('img.ci');
         const io = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.setAttribute('fetchpriority', 'auto');
+                    loadImage(entry.target);
                     observer.unobserve(entry.target);
                 }
             });
-        }, {rootMargin: '500px 0px'});
+        }, {rootMargin: '900px 0px'});
         imgs.forEach(img => io.observe(img));
+    } else {
+        // Older phones: load progressively instead of requesting everything at once.
+        let n = 0;
+        const batch = () => {
+            const end = Math.min(n + 8, imgs.length);
+            for (; n < end; n++) loadImage(imgs[n]);
+            if (n < imgs.length) setTimeout(batch, 120);
+        };
+        batch();
     }
-    
+
     // Attach click events
     document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('click', () => {
